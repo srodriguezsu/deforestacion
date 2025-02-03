@@ -11,6 +11,19 @@ def cargar_datos():
     df = pd.read_csv(url)
     return df.interpolate(method='linear')
 
+def grafico_torta_vegetacion(df):
+    """Genera un gráfico de torta según el tipo de vegetación.
+
+    Args:
+        df (pd.DataFrame): DataFrame con columna 'Tipo_Vegetacion'.
+    """
+    st.write("### Distribución por Tipo de Vegetación")
+    tipo_veg = df['Tipo_Vegetacion'].value_counts()
+    fig, ax = plt.subplots()
+    ax.pie(tipo_veg, labels=tipo_veg.index, autopct='%1.1f%%', startangle=90)
+    st.pyplot(fig)
+
+
 def mostrar_estadisticas(df):
     """Muestra estadísticas generales del dataset."""
     st.write("### Estadísticas Generales")
@@ -84,6 +97,8 @@ def main():
 
         # Display map based on selected filters
         mostrar_mapa_deforestacion(df, variables_seleccionadas, rango_latitud, rango_longitud, rango_altitud, rango_precipitacion)
+        grafico_torta_vegetacion(df)
+        clusterizar_deforestacion(df)
 
 if __name__ == "__main__":
     main()
