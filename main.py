@@ -155,6 +155,34 @@ def main():
         graficar_zonas_deforestadas(gdf, 'Tipo_Vegetacion', mapa_mundo)        
         graficar_zonas_deforestadas(gdf, 'Altitud', mapa_mundo)        
         graficar_zonas_deforestadas(gdf, 'Precipitacion', mapa_mundo)        
+        st.write("Selecciona hasta 4 variables para filtrar los datos y visualizar el mapa.")
+        
+        variables = ['Latitud', 'Longitud', 'Tipo_Vegetacion', 'Altitud', 'Precipitacion']
+
+        # Crear un diccionario para almacenar los valores seleccionados
+        variables_seleccionadas = {}
+
+        for variable in variables:
+            if variable in gdf.columns:
+                # Si la variable es numérica, ofrecer un rango
+                if pd.api.types.is_numeric_dtype(gdf[variable]):
+                    min_val = gdf[variable].min()
+                    max_val = gdf[variable].max()
+                    st.write(f"Selecciona un rango para {variable}.")
+                    valores = st.slider(f"{variable}", min_val, max_val, (min_val, max_val))
+                    variables_seleccionadas[variable] = valores
+                # Si la variable es categórica, ofrecer un desplegable
+                else:
+                    opciones = gdf[variable].unique()
+                    seleccionados = st.multiselect(f"Selecciona las categorías para {variable}.", opciones, default=opciones)
+                    variables_seleccionadas[variable] = seleccionados
+
+        # Filtrar y graficar el mapa según las variables seleccionadas
+        if variables_seleccionadas:
+            graficar_zonas_deforestadas(gdf, variables_seleccionadas, mapa_mundo)
+        else:
+            st.warning("No se han seleccionado variables para filtrar.")
+
         
         
     else:
