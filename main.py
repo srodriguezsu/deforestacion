@@ -11,14 +11,55 @@ def load_data(file=None, url=None):
     else:
         return None
 
-def infer_and_convert_data(df):
-    """Infiera el tipo de dato y convierte las columnas numéricas a tipo float para la interpolación."""
-    # Seleccionar solo las columnas numéricas
-    numeric_cols = df.select_dtypes(include=[np.number]).columns
-    # Convertir todas las columnas numéricas a float
-    df[numeric_cols] = df[numeric_cols].astype(float)
-    return df
+def analizar_deforestacion(df):
+    """Realiza un análisis básico de deforestación a partir de un DataFrame con las columnas 'año', 'superficie_total', 'superficie_deforestada'."""
+    
+    # Asegúrate de que los datos estén en el tipo adecuado (números)
+    df['superficie_total'] = df['superficie_total'].astype(float)
+    df['superficie_deforestada'] = df['superficie_deforestada'].astype(float)
+    
+    # Calcula la superficie deforestada anual (si los datos no están en términos anuales)
+    df['superficie_deforestada_anual'] = df['superficie_deforestada'].diff().fillna(0)
+    
+    # Calcula la tasa de deforestación anual
+    df['tasa_deforestacion'] = df['superficie_deforestada_anual'] / df['superficie_total']
+    
+    # Calcula el porcentaje de deforestación con respecto a la superficie total
+    df['porcentaje_deforestado'] = (df['superficie_deforestada'] / df['superficie_total']) * 100
+    
+    # Resultados generales
+    superficie_total_inicial = df['superficie_total'].iloc[0]
+    superficie_total_final = df['superficie_total'].iloc[-1]
+    superficie_deforestada_total = df['superficie_deforestada'].iloc[-1]
+    
+    tasa_deforestacion_total = df['tasa_deforestacion'].sum()
+    
+    # Mostrar los resultados de análisis
+    st.write(f"Superficie total inicial: {superficie_total_inicial} ha")
+    st.write(f"Superficie total final: {superficie_total_final} ha")
+    st.write(f"Superficie deforestada total: {superficie_deforestada_total} ha")
+    st.write(f"Tasa total de deforestación: {tasa_deforestacion_total:.4f}")
+    
+    # Mostrar la tabla con los resultados
+    st.write(df)
+    
+    # Gráficos para visualizar las tendencias
+    fig, ax = plt.subplots(1, 2, figsize=(12, 6))
 
+    # Gráfico de la superficie deforestada anual
+    ax[0].plot(df['año'], df['superficie_deforestada_anual'], marker='o', color='tab:red')
+    ax[0].set_title('Superficie deforestada anual')
+    ax[0].set_xlabel('Año')
+    ax[0].set_ylabel('Área deforestada (ha)')
+    
+    # Gráfico de porcentaje de deforestación
+    ax[1].plot(df['año'], df['porcentaje_deforestado'], marker='o', color='tab:blue')
+    ax[1].set_title('Porcentaje de deforestación')
+    ax[1].set_xlabel('Año')
+    ax[1].set_ylabel('Porcentaje (%)')
+
+    st.pyplot(fig)
+        
 
 def main():
     st.title('Aplicación de Interpolación de Datos')
@@ -38,10 +79,10 @@ def main():
 
     if data is not None:
         st.write("Datos cargados exitosamente:")
-        data = infer_and_convert_data(data)
-        interpolado = data.interpolate(method='linear')
+        data = data.interpolate(method='linear')
         
-        st.write(interpolado)
+        st.write(data)
+        analizar_deforestacion(data)
         
     else:
         st.warning("Por favor, carga un archivo o ingresa una URL válida.")
