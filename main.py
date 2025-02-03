@@ -57,6 +57,22 @@ def mostrar_mapa_deforestacion(df, variables_seleccionadas, rango_latitud, rango
     gdf.plot(ax=ax, column='Superficie_Deforestada', legend=True, cmap='Reds', markersize=5)
     st.pyplot(fig)
 
+
+
+def clusterizar_deforestacion(df):
+    """Realiza un análisis de clúster sobre las superficies deforestadas.
+
+    Args:
+        df (pd.DataFrame): DataFrame con columnas 'Latitud', 'Longitud', 'Superficie_Deforestada'.
+    """
+    st.write("### Análisis de Clúster de Deforestación")
+    df['cluster'] = np.digitize(df['Superficie_Deforestada'], bins=np.histogram_bin_edges(df['Superficie_Deforestada'], bins=3))
+    fig, ax = plt.subplots()
+    scatter = ax.scatter(df['Longitud'], df['Latitud'], c=df['cluster'], cmap='viridis')
+    plt.colorbar(scatter)
+    st.pyplot(fig)
+    
+
 def main():
     """Función principal para ejecutar la aplicación de análisis de deforestación."""
     st.title("Análisis de Deforestación")
