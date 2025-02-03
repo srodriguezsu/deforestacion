@@ -99,6 +99,7 @@ def crear_geodataframe(df):
 
 def graficar_zonas_deforestadas(gdf, variable, mapa_mundo):
     """Grafica el mapa de zonas deforestadas según una variable (tipo de vegetación, altitud, precipitación)."""
+    st.write(f"# Mapa segun {variable}:")
     # Primero, asegurarnos que la variable existe en el DataFrame
     if variable not in gdf.columns:
         st.warning(f"La variable {variable} no se encuentra en los datos.")
@@ -182,13 +183,19 @@ def main():
         graficar_zonas_deforestadas(gdf, 'Tipo_Vegetacion', mapa_mundo)        
         graficar_zonas_deforestadas(gdf, 'Altitud', mapa_mundo)        
         graficar_zonas_deforestadas(gdf, 'Precipitacion', mapa_mundo)        
-        st.write("Selecciona hasta 4 variables para filtrar los datos y visualizar el mapa.")
-        
+        # Selección de variables a filtrar
+        st.write("# Mapa personalizado:")
+        st.write("Selecciona las variables que deseas filtrar:")
         variables = ['Latitud', 'Longitud', 'Tipo_Vegetacion', 'Altitud', 'Precipitacion']
 
-        # Crear un diccionario para almacenar los valores seleccionados
+        # Permitir al usuario seleccionar hasta 4 variables para las que aplicar filtros
         variables_seleccionadas = {}
-
+        variables_elegidas = st.multiselect(
+            "Elige las variables que quieres filtrar",
+            variables,
+            default=variables  # Predeterminado es seleccionar todas
+        )
+        
         for variable in variables:
             if variable in gdf.columns:
                 # Si la variable es numérica, ofrecer un rango
