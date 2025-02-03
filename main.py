@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+
 
 def load_data(file=None, url=None):
     """Carga los datos desde un archivo o una URL."""
