@@ -28,8 +28,7 @@ def mostrar_mapa_deforestacion(df):
         df (pd.DataFrame): DataFrame con las columnas 'Latitud', 'Longitud', 'Superficie_Deforestada'.
     """
     st.write("### Mapa de Zonas Deforestadas")
-    route = "https://naturalearth.s3.amazonaws.com/50m_cultural\
-    /ne_50m_admin_0_countries.zip"
+    route = "https://naturalearth.s3.amazonaws.com/50m_cultural/ne_50m_admin_0_countries.zip"
 
     world = gpd.read_file(route)
     df['geometry'] = df.apply(lambda row: Point(row['Longitud'], row['Latitud']), axis=1)
