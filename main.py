@@ -11,6 +11,14 @@ def load_data(file=None, url=None):
     else:
         return None
 
+def infer_and_convert_data(df):
+    """Infiera el tipo de dato y convierte las columnas numéricas a tipo float para la interpolación."""
+    # Seleccionar solo las columnas numéricas
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    # Convertir todas las columnas numéricas a float
+    df[numeric_cols] = df[numeric_cols].astype(float)
+    return df
+
 
 def main():
     st.title('Aplicación de Interpolación de Datos')
@@ -30,7 +38,7 @@ def main():
 
     if data is not None:
         st.write("Datos cargados exitosamente:")
-        data = data.inferobjects()
+        data = infer_and_convert_data(data)
         data = data.interpolate(method='linear', limit_direction='both')
         
         st.write(data.head())
