@@ -30,7 +30,9 @@ def main():
 
     if data is not None:
         st.write("Datos cargados exitosamente:")
+        data = data.inferobjects()
         data = data.interpolate(method='linear', limit_direction='both')
+        
         st.write(data.head())
         
     else:
