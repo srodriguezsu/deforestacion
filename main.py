@@ -151,7 +151,7 @@ def graficar_zonas_deforestadas_personalizadas(gdf, variables_seleccionadas, map
     st.pyplot(fig)
 
 
-def realizar_clustering(df, n_clusters=3):
+def realizar_clustering(df):
     """Realiza un análisis de clúster utilizando K-means para las superficies deforestadas."""
     
     # Filtrar columnas relevantes para el clustering
@@ -162,7 +162,7 @@ def realizar_clustering(df, n_clusters=3):
     datos_normalizados = scaler.fit_transform(datos_clustering)
     
     # Aplicar el algoritmo K-means
-    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    kmeans = KMeans(n_clusters=5, random_state=42)
     df['Cluster'] = kmeans.fit_predict(datos_normalizados)
     
     return df, kmeans
