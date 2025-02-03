@@ -24,7 +24,7 @@ def analizar_deforestacion(df):
     df['Precipitacion'] = df['Precipitacion'].astype(float)
     df['Temperatura'] = df['Temperatura'].astype(float)
 
-    st.write(f"#Análisis de datos")
+    st.write("# Análisis de datos")
     
     # Analizar superficie deforestada total
     superficie_deforestada_total = df['Superficie_Deforestada'].sum()
