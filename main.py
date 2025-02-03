@@ -75,6 +75,52 @@ def analizar_deforestacion(df):
     st.pyplot(fig)
         
 
+def cargar_mapa_mundo():
+    """Carga el mapa mundial utilizando GeoPandas."""
+    ruta_0 = "https://naturalearth.s3.amazonaws.com/50m_cultural/ne_50m_admin_0_countries.zip"
+    return gpd.read_file(ruta_0)
+
+
+def crear_geodataframe(df):
+    """Convierte un DataFrame con columnas de latitud y longitud en un GeoDataFrame."""
+    # Asegúrate de que latitud y longitud sean numéricas
+    df['Latitud'] = pd.to_numeric(df['Latitud'], errors='coerce')
+    df['Longitud'] = pd.to_numeric(df['Longitud'], errors='coerce')
+    
+    # Crear una nueva columna de geometría como puntos (lat, long)
+    geometry = [Point(xy) for xy in zip(df['Longitud'], df['Latitud'])]
+    
+    # Crear un GeoDataFrame
+    gdf = gpd.GeoDataFrame(df, geometry=geometry)
+    gdf.set_crs(epsg=4326, inplace=True)  # Usar el sistema de referencia espacial WGS 84
+    return gdf
+
+
+def graficar_zonas_deforestadas(gdf, variable, mapa_mundo):
+    """Grafica el mapa de zonas deforestadas según una variable (tipo de vegetación, altitud, precipitación)."""
+    # Primero, asegurarnos que la variable existe en el DataFrame
+    if variable not in gdf.columns:
+        st.warning(f"La variable {variable} no se encuentra en los datos.")
+        return
+
+    # Crear una figura y un eje para el gráfico
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    # Graficar el mapa mundial
+    mapa_mundo.plot(ax=ax, color='lightgrey', edgecolor='black')
+
+    # Graficar las zonas deforestadas según la variable seleccionada
+    gdf.plot(ax=ax, column=variable, legend=True, cmap='coolwarm', markersize=5, alpha=0.7)
+
+    # Títulos y etiquetas
+    ax.set_title(f"Zonas deforestadas por {variable}", fontsize=16)
+    ax.set_xlabel('Longitud')
+    ax.set_ylabel('Latitud')
+
+    # Mostrar el gráfico
+    st.pyplot(fig)
+
+
 def main():
     st.title('Aplicación de Deforestación')
 
@@ -97,6 +143,10 @@ def main():
         
         st.write(data)
         analizar_deforestacion(data)
+        graficar_zonas_deforestadas(gdf, 'Tipo_Vegetacion', mapa_mundo)        
+        graficar_zonas_deforestadas(gdf, 'Altitud', mapa_mundo)        
+        graficar_zonas_deforestadas(gdf, 'Precipitacion', mapa_mundo)        
+        
         
     else:
         st.warning("Por favor, carga un archivo o ingresa una URL válida.")
