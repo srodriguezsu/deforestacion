@@ -11,9 +11,6 @@ def load_data(file=None, url=None):
     else:
         return None
 
-def interpolate_data(df, method):
-    """Rellena los valores faltantes en el DataFrame usando el método de interpolación seleccionado."""
-    return df.interpolate(method=method, limit_direction='both')
 
 def main():
     st.title('Aplicación de Interpolación de Datos')
@@ -33,28 +30,12 @@ def main():
 
     if data is not None:
         st.write("Datos cargados exitosamente:")
+        data = data.interpolate(method='linear', limit_direction='both')
         st.write(data.head())
-
-        # Opción para seleccionar el método de interpolación
-        method = st.selectbox("Selecciona el método de interpolación", ['linear', 'polynomial', 'spline', 'barycentric', 'pchip'])
-
-        # Interpolar los datos
-        interpolated_data = interpolate_data(data, method)
-
-        # Mostrar el DataFrame con los valores interpolados
-        st.write("Datos después de la interpolación:")
-        st.write(interpolated_data)
-
-        # Descargar el archivo interpolado
-        csv = interpolated_data.to_csv(index=False)
-        st.download_button(
-            label="Descargar archivo interpolado",
-            data=csv,
-            file_name="datos_interpolados.csv",
-            mime="text/csv"
-        )
+        
     else:
         st.warning("Por favor, carga un archivo o ingresa una URL válida.")
+
 
 if __name__ == "__main__":
     main()
