@@ -73,10 +73,8 @@ def mostrar_mapas_deforestacion(df):
     gdf = gpd.GeoDataFrame(df, geometry='geometry')
     
     # Descargar un mapa base del mundo para mostrar las zonas de deforestación
-    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-    
-    # Filtrar el mapa mundial para obtener solo América del Sur (opcional)
-    # world = world[world['continent'] == 'South America']
+    route = "https://naturalearth.s3.amazonaws.com/50m_cultural/ne_50m_admin_0_countries.zip"
+    world = gpd.read_file(route)
     
     # Plot mapa de zonas deforestadas por Tipo de Vegetación
     st.write("### Mapa de Zonas Deforestadas por Tipo de Vegetación")
