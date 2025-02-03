@@ -84,14 +84,6 @@ def mostrar_mapas_deforestacion(df):
     ax.set_title("Zonas Deforestadas por Tipo de Vegetación")
     st.pyplot(fig)
 
-    # Plot mapa de zonas deforestadas por Altitud
-    st.write("### Mapa de Zonas Deforestadas por Altitud")
-    fig, ax = plt.subplots(figsize=(10, 6))
-    world.plot(ax=ax, color='lightgray')
-    gdf.plot(ax=ax, column='Altitud', legend=True, cmap='YlGnBu', markersize=10, legend_kwds={'bbox_to_anchor': (1, 1)})
-    ax.set_title("Zonas Deforestadas por Altitud")
-    st.pyplot(fig)
-
 
 
 
