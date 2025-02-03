@@ -23,6 +23,8 @@ def analizar_deforestacion(df):
     df['Distancia_Carretera'] = df['Distancia_Carretera'].astype(float)
     df['Precipitacion'] = df['Precipitacion'].astype(float)
     df['Temperatura'] = df['Temperatura'].astype(float)
+
+    st.write(f"#Análisis de datos")
     
     # Analizar superficie deforestada total
     superficie_deforestada_total = df['Superficie_Deforestada'].sum()
@@ -74,7 +76,7 @@ def analizar_deforestacion(df):
         
 
 def main():
-    st.title('Aplicación de Interpolación de Datos')
+    st.title('Aplicación de Deforestación')
 
     # Opción para cargar datos desde archivo o URL
     option = st.radio("Selecciona cómo cargar los datos", ("Subir archivo", "Usar URL"))
