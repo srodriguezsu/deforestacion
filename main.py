@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
-import geopandas as gpd
 import streamlit as st
-from sklearn.cluster import KMeans
-from scipy.stats import zscore
+import geopandas as gpd
 import matplotlib.pyplot as plt
+from scipy.stats import zscore
 from shapely.geometry import Point
 
 
