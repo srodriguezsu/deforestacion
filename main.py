@@ -144,6 +144,13 @@ def main():
         
         st.write(data)
         analizar_deforestacion(data)
+
+                # Crear un GeoDataFrame a partir de los datos
+        gdf = crear_geodataframe(data)
+
+        # Cargar el mapa mundial
+        mapa_mundo = cargar_mapa_mundo()
+        
         graficar_zonas_deforestadas(gdf, 'Tipo_Vegetacion', mapa_mundo)        
         graficar_zonas_deforestadas(gdf, 'Altitud', mapa_mundo)        
         graficar_zonas_deforestadas(gdf, 'Precipitacion', mapa_mundo)        
