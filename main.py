@@ -5,29 +5,15 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 from scipy.interpolate import griddata
 
-
 def cargar_datos():
-    """Carga datos desde un archivo subido o una URL ingresada por el usuario.
+    """Carga datos desde la URL fija del archivo de deforestación.
 
     Returns:
         pd.DataFrame: DataFrame con los datos cargados e interpolados.
     """
-    fuente = st.radio("Seleccione la fuente de datos", ("Archivo", "URL"))
-    
-    if fuente == "Archivo":
-        archivo = st.file_uploader("Suba un archivo CSV", type=["csv"])
-        if archivo is not None:
-            df = pd.read_csv(archivo)
-            return df.interpolate(method='linear')
-
-    elif fuente == "URL":
-        url = st.text_input("Ingrese la URL del archivo CSV")
-        if url:
-            df = pd.read_csv(url)
-            return df.interpolate(method='linear')
-
-    return None
-
+    url = "https://raw.githubusercontent.com/gabrielawad/programacion-para-ingenieria/refs/heads/main/archivos-datos/aplicaciones/deforestacion.csv"
+    df = pd.read_csv(url)
+    return df.interpolate(method='linear')
 
 def mostrar_estadisticas(df):
     """Muestra estadísticas generales del dataset."""
@@ -70,4 +56,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
