@@ -10,54 +10,64 @@ def load_data(file=None, url=None):
         return pd.read_csv(url)
     else:
         return None
-
 def analizar_deforestacion(df):
-    """Realiza un análisis básico de deforestación a partir de un DataFrame con las columnas 'año', 'superficie_total', 'superficie_deforestada'."""
+    """Realiza un análisis básico de deforestación a partir de un DataFrame con las columnas proporcionadas."""
     
-    # Asegúrate de que los datos estén en el tipo adecuado (números)
-    df['superficie_total'] = df['superficie_total'].astype(float)
-    df['superficie_deforestada'] = df['superficie_deforestada'].astype(float)
+    # Convertir las columnas numéricas a float si es necesario
+    df['Superficie_Deforestada'] = df['Superficie_Deforestada'].astype(float)
+    df['Tasa_Deforestacion'] = df['Tasa_Deforestacion'].astype(float)
+    df['Altitud'] = df['Altitud'].astype(float)
+    df['Pendiente'] = df['Pendiente'].astype(float)
+    df['Distancia_Carretera'] = df['Distancia_Carretera'].astype(float)
+    df['Precipitacion'] = df['Precipitacion'].astype(float)
+    df['Temperatura'] = df['Temperatura'].astype(float)
     
-    # Calcula la superficie deforestada anual (si los datos no están en términos anuales)
-    df['superficie_deforestada_anual'] = df['superficie_deforestada'].diff().fillna(0)
+    # Analizar superficie deforestada total
+    superficie_deforestada_total = df['Superficie_Deforestada'].sum()
+    st.write(f"Superficie deforestada total: {superficie_deforestada_total:.2f} ha")
     
-    # Calcula la tasa de deforestación anual
-    df['tasa_deforestacion'] = df['superficie_deforestada_anual'] / df['superficie_total']
+    # Analizar la tasa de deforestación promedio
+    tasa_deforestacion_promedio = df['Tasa_Deforestacion'].mean()
+    st.write(f"Tasa de deforestación promedio: {tasa_deforestacion_promedio:.4f}")
     
-    # Calcula el porcentaje de deforestación con respecto a la superficie total
-    df['porcentaje_deforestado'] = (df['superficie_deforestada'] / df['superficie_total']) * 100
+    # Tendencia temporal de la superficie deforestada
+    df['Fecha'] = pd.to_datetime(df['Fecha'])
+    df.set_index('Fecha', inplace=True)
     
-    # Resultados generales
-    superficie_total_inicial = df['superficie_total'].iloc[0]
-    superficie_total_final = df['superficie_total'].iloc[-1]
-    superficie_deforestada_total = df['superficie_deforestada'].iloc[-1]
+    superficie_deforestada_anual = df.resample('Y')['Superficie_Deforestada'].sum()
     
-    tasa_deforestacion_total = df['tasa_deforestacion'].sum()
+    st.write("Superficie deforestada anual:")
+    st.write(superficie_deforestada_anual)
     
-    # Mostrar los resultados de análisis
-    st.write(f"Superficie total inicial: {superficie_total_inicial} ha")
-    st.write(f"Superficie total final: {superficie_total_final} ha")
-    st.write(f"Superficie deforestada total: {superficie_deforestada_total} ha")
-    st.write(f"Tasa total de deforestación: {tasa_deforestacion_total:.4f}")
-    
-    # Mostrar la tabla con los resultados
-    st.write(df)
-    
-    # Gráficos para visualizar las tendencias
-    fig, ax = plt.subplots(1, 2, figsize=(12, 6))
-
     # Gráfico de la superficie deforestada anual
-    ax[0].plot(df['año'], df['superficie_deforestada_anual'], marker='o', color='tab:red')
-    ax[0].set_title('Superficie deforestada anual')
-    ax[0].set_xlabel('Año')
-    ax[0].set_ylabel('Área deforestada (ha)')
-    
-    # Gráfico de porcentaje de deforestación
-    ax[1].plot(df['año'], df['porcentaje_deforestado'], marker='o', color='tab:blue')
-    ax[1].set_title('Porcentaje de deforestación')
-    ax[1].set_xlabel('Año')
-    ax[1].set_ylabel('Porcentaje (%)')
+    fig, ax = plt.subplots(figsize=(10, 5))
+    superficie_deforestada_anual.plot(kind='line', ax=ax, marker='o', color='tab:red')
+    ax.set_title('Superficie deforestada anual')
+    ax.set_xlabel('Año')
+    ax.set_ylabel('Superficie deforestada (ha)')
+    st.pyplot(fig)
 
+    # Relación de variables geográficas y climáticas con la deforestación
+    st.write("Correlaciones entre las variables y la superficie deforestada:")
+    correlaciones = df[['Latitud', 'Longitud', 'Altitud', 'Pendiente', 'Distancia_Carretera', 'Precipitacion', 'Temperatura', 'Superficie_Deforestada']].corr()
+    st.write(correlaciones)
+
+    # Gráfico de correlación
+    fig, ax = plt.subplots(figsize=(10, 8))
+    cax = ax.matshow(correlaciones, cmap='coolwarm')
+    fig.colorbar(cax)
+    ax.set_xticks(np.arange(len(correlaciones.columns)))
+    ax.set_yticks(np.arange(len(correlaciones.columns)))
+    ax.set_xticklabels(correlaciones.columns, rotation=90)
+    ax.set_yticklabels(correlaciones.columns)
+    st.pyplot(fig)
+
+    # Histograma de la temperatura y deforestación
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.scatter(df['Temperatura'], df['Superficie_Deforestada'], color='tab:blue')
+    ax.set_title('Temperatura vs Superficie deforestada')
+    ax.set_xlabel('Temperatura (°C)')
+    ax.set_ylabel('Superficie deforestada (ha)')
     st.pyplot(fig)
         
 
