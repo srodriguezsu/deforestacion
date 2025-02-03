@@ -24,22 +24,22 @@ def mostrar_mapa_deforestacion(df):
     """Genera un mapa con las zonas de deforestación.
 
     Args:
-        df (pd.DataFrame): DataFrame con las columnas 'lat', 'lon', 'superficie_deforestada'.
+        df (pd.DataFrame): DataFrame con las columnas 'Latitud', 'Longitud', 'Superficie_Deforestada'.
     """
     st.write("### Mapa de Zonas Deforestadas")
     gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.Longitud, df.Latitud))
     fig, ax = plt.subplots()
-    gdf.plot(ax=ax, column='superficie_deforestada', legend=True, cmap='Reds')
+    gdf.plot(ax=ax, column='Superficie_Deforestada', legend=True, cmap='Reds')
     st.pyplot(fig)
 
 def clusterizar_deforestacion(df):
     """Realiza un análisis de clúster sobre las superficies deforestadas.
 
     Args:
-        df (pd.DataFrame): DataFrame con columnas 'lat', 'lon', 'superficie_deforestada'.
+        df (pd.DataFrame): DataFrame con columnas 'Latitud', 'Longitud', 'Superficie_Deforestada'.
     """
     st.write("### Análisis de Clúster de Deforestación")
-    df['cluster'] = np.digitize(df['superficie_deforestada'], bins=np.histogram_bin_edges(df['superficie_deforestada'], bins=3))
+    df['cluster'] = np.digitize(df['Superficie_Deforestada'], bins=np.histogram_bin_edges(df['Superficie_Deforestada'], bins=3))
     fig, ax = plt.subplots()
     scatter = ax.scatter(df['Longitud'], df['Latitud'], c=df['cluster'], cmap='viridis')
     plt.colorbar(scatter)
