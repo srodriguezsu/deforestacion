@@ -196,7 +196,7 @@ def main():
             default=variables  # Predeterminado es seleccionar todas
         )
         
-        for variable in variables:
+        for variable in variables_elegidas:
             if variable in gdf.columns:
                 # Si la variable es numérica, ofrecer un rango
                 if pd.api.types.is_numeric_dtype(gdf[variable]):
