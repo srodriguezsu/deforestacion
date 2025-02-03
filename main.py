@@ -151,6 +151,41 @@ def graficar_zonas_deforestadas_personalizadas(gdf, variables_seleccionadas, map
     st.pyplot(fig)
 
 
+def realizar_clustering(df, n_clusters=3):
+    """Realiza un análisis de clúster utilizando K-means para las superficies deforestadas."""
+    
+    # Filtrar columnas relevantes para el clustering
+    datos_clustering = df[['Superficie_Deforestada', 'Latitud', 'Longitud']].dropna()
+    
+    # Normalizar los datos antes de aplicar K-means
+    scaler = StandardScaler()
+    datos_normalizados = scaler.fit_transform(datos_clustering)
+    
+    # Aplicar el algoritmo K-means
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
+    df['Cluster'] = kmeans.fit_predict(datos_normalizados)
+    
+    return df, kmeans
+
+def graficar_clustering(gdf, mapa_mundo, kmeans_model):
+    """Grafica el análisis de clúster en un mapa, mostrando los diferentes clústeres."""
+    
+    # Cargar mapa mundial
+    fig, ax = plt.subplots(figsize=(12, 8))
+    mapa_mundo.plot(ax=ax, color='lightgrey', edgecolor='black')
+    
+    # Graficar los puntos según los clusters
+    gdf.plot(ax=ax, column='Cluster', cmap='viridis', legend=True, markersize=50, alpha=0.7)
+    
+    # Títulos y etiquetas
+    ax.set_title('Análisis de Clúster de Superficies Deforestadas', fontsize=16)
+    ax.set_xlabel('Longitud')
+    ax.set_ylabel('Latitud')
+    
+    # Mostrar el gráfico
+    st.pyplot(fig)
+    
+
 def main():
     st.title('Aplicación de Deforestación')
 
@@ -216,6 +251,18 @@ def main():
             graficar_zonas_deforestadas_personalizadas(gdf, variables_seleccionadas, mapa_mundo)
         else:
             st.warning("No se han seleccionado variables para filtrar.")
+        
+        gdf1 = crear_geodataframe(data)
+        clustered_data, kmeans_model = realizar_clustering(gdf1, 5)
+        
+        # Mostrar los clústeres
+        st.write(clustered_data[['Latitud', 'Longitud', 'Superficie_Deforestada', 'Cluster']].head())
+        
+        # Cargar el mapa mundial
+        mapa_mundo1 = cargar_mapa_mundo()
+
+        # Graficar los resultados del clúster
+        graficar_clustering(clustered_data, mapa_mundo1, kmeans_model)
 
         
         
