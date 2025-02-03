@@ -9,24 +9,14 @@ from shapely.geometry import Point
 def cargar_datos():
     """Carga datos desde un archivo subido por el usuario o desde una URL fija."""
 
-    # Opción para cargar archivo desde el sistema local o usar URL predeterminada
-    opcion = st.selectbox("Selecciona la fuente de datos", ["Subir archivo", "Leer desde URL"])
-
-    if opcion == "Subir archivo":
-        # Subir un archivo CSV
-        archivo = st.file_uploader("Sube un archivo CSV", type=["csv"])
-        if archivo is not None:
-            df = pd.read_csv(archivo)
-            return df.interpolate(method='linear')  # Interpolación lineal de los valores faltantes
-        else:
-            st.warning("Por favor, sube un archivo.")
-            return None
-    else:
-        # Cargar desde URL fija
-        url = "https://raw.githubusercontent.com/gabrielawad/programacion-para-ingenieria/refs/heads/main/archivos-datos/aplicaciones/deforestacion.csv"
-        df = pd.read_csv(url)
+    # Subir un archivo CSV
+    archivo = st.file_uploader("Sube un archivo CSV", type=["csv"])
+    if archivo is not None:
+        df = pd.read_csv(archivo)
         return df.interpolate(method='linear')  # Interpolación lineal de los valores faltantes
-
+    else:
+        st.warning("Por favor, sube un archivo.")
+        return None
 
 def grafico_torta_vegetacion(df):
     """Genera un gráfico de torta según el tipo de vegetación.
