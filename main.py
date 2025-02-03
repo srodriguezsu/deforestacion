@@ -39,9 +39,9 @@ def main():
     if data is not None:
         st.write("Datos cargados exitosamente:")
         data = infer_and_convert_data(data)
-        data = data.interpolate(method='linear')
+        interpolado = data.interpolate(method='linear')
         
-        st.write(data.head())
+        st.write(interpolado.head())
         
     else:
         st.warning("Por favor, carga un archivo o ingresa una URL válida.")
