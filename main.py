@@ -58,6 +58,50 @@ def mostrar_mapa_deforestacion(df, variables_seleccionadas, rango_latitud, rango
     st.pyplot(fig)
 
 
+def mostrar_mapas_deforestacion(df):
+    """Genera mapas de las zonas deforestadas basados en el tipo de vegetación, 
+    altitud y precipitación.
+    
+    Args:
+        df (pd.DataFrame): DataFrame 
+    Returns:
+        None: Muestra tres mapas en Streamlit, uno por cada variable (Tipo de Vegetación, Altitud, Precipitación).
+    """
+    
+    # Convertir las coordenadas en puntos geográficos y crear un GeoDataFrame
+    df['geometry'] = df.apply(lambda row: Point(row['Longitud'], row['Latitud']), axis=1)
+    gdf = gpd.GeoDataFrame(df, geometry='geometry')
+    
+    # Descargar un mapa base del mundo para mostrar las zonas de deforestación
+    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    
+    # Filtrar el mapa mundial para obtener solo América del Sur (opcional)
+    # world = world[world['continent'] == 'South America']
+    
+    # Plot mapa de zonas deforestadas por Tipo de Vegetación
+    st.write("### Mapa de Zonas Deforestadas por Tipo de Vegetación")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    world.plot(ax=ax, color='lightgray')
+    gdf.plot(ax=ax, column='Tipo_Vegetacion', legend=True, cmap='Set3', markersize=10, legend_kwds={'bbox_to_anchor': (1, 1)})
+    ax.set_title("Zonas Deforestadas por Tipo de Vegetación")
+    st.pyplot(fig)
+
+    # Plot mapa de zonas deforestadas por Altitud
+    st.write("### Mapa de Zonas Deforestadas por Altitud")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    world.plot(ax=ax, color='lightgray')
+    gdf.plot(ax=ax, column='Altitud', legend=True, cmap='YlGnBu', markersize=10, legend_kwds={'bbox_to_anchor': (1, 1)})
+    ax.set_title("Zonas Deforestadas por Altitud")
+    st.pyplot(fig)
+
+    # Plot mapa de zonas deforestadas por Precipitación
+    st.write("### Mapa de Zonas Deforestadas por Precipitación")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    world.plot(ax=ax, color='lightgray')
+    gdf.plot(ax=ax, column='Precipitacion', legend=True, cmap='Blues', markersize=10, legend_kwds={'bbox_to_anchor': (1, 1)})
+    ax.set_title("Zonas Deforestadas por Precipitación")
+    st.pyplot(fig)
+
 
 def clusterizar_deforestacion(df):
     """Realiza un análisis de clúster sobre las superficies deforestadas, 
@@ -144,6 +188,7 @@ def main():
         mostrar_mapa_deforestacion(df, variables_seleccionadas, rango_latitud, rango_longitud, rango_altitud, rango_precipitacion)
         grafico_torta_vegetacion(df)
         clusterizar_deforestacion(df)
+        mostrar_mapas_deforestacion(df)
 
 if __name__ == "__main__":
     main()
