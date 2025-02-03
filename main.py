@@ -193,7 +193,7 @@ def main():
         variables_elegidas = st.multiselect(
             "Elige las variables que quieres filtrar",
             variables,
-            default=variables  # Predeterminado es seleccionar todas
+            default=['Tipo_Vegetacion', 'Precipitacion']
         )
         
         for variable in variables_elegidas:
