@@ -41,7 +41,7 @@ def main():
         data = infer_and_convert_data(data)
         interpolado = data.interpolate(method='linear')
         
-        st.write(interpolado.head())
+        st.write(interpolado)
         
     else:
         st.warning("Por favor, carga un archivo o ingresa una URL válida.")
