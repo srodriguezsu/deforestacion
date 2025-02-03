@@ -1,9 +1,12 @@
-import geopandas as gpd
 import pandas as pd
 import numpy as np
+import geopandas as gpd
 import streamlit as st
+from sklearn.cluster import KMeans
+from scipy.stats import zscore
 import matplotlib.pyplot as plt
 from shapely.geometry import Point
+
 
 def load_data(file=None, url=None):
     """Carga los datos desde un archivo o una URL."""
@@ -151,18 +154,17 @@ def graficar_zonas_deforestadas_personalizadas(gdf, variables_seleccionadas, map
     st.pyplot(fig)
 
 
-def realizar_clustering(df):
+def realizar_clustering(df, n_clusters=3):
     """Realiza un análisis de clúster utilizando K-means para las superficies deforestadas."""
     
     # Filtrar columnas relevantes para el clustering
     datos_clustering = df[['Superficie_Deforestada', 'Latitud', 'Longitud']].dropna()
     
-    # Normalizar los datos antes de aplicar K-means
-    scaler = StandardScaler()
-    datos_normalizados = scaler.fit_transform(datos_clustering)
+    # Normalizar los datos utilizando zscore de scipy
+    datos_normalizados = datos_clustering.apply(zscore)
     
     # Aplicar el algoritmo K-means
-    kmeans = KMeans(n_clusters=5, random_state=42)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=42)
     df['Cluster'] = kmeans.fit_predict(datos_normalizados)
     
     return df, kmeans
