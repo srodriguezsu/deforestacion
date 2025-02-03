@@ -13,15 +13,6 @@ def cargar_datos():
     """
     url = "https://raw.githubusercontent.com/gabrielawad/programacion-para-ingenieria/refs/heads/main/archivos-datos/aplicaciones/deforestacion.csv"
     df = pd.read_csv(url)
-    st.write("### Nombres de las columnas en el dataset:", df.columns.tolist())
-    
-    # Renombrar columnas si es necesario
-    column_mapping = {
-        "longitude": "lon",
-        "latitude": "lat"
-    }
-    df = df.rename(columns=column_mapping)
-    
     return df.interpolate(method='linear')
 
 def mostrar_estadisticas(df):
@@ -36,13 +27,10 @@ def mostrar_mapa_deforestacion(df):
         df (pd.DataFrame): DataFrame con las columnas 'lat', 'lon', 'superficie_deforestada'.
     """
     st.write("### Mapa de Zonas Deforestadas")
-    if "lon" in df.columns and "lat" in df.columns:
-        gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.lon, df.lat))
-        fig, ax = plt.subplots()
-        gdf.plot(ax=ax, column='superficie_deforestada', legend=True, cmap='Reds')
-        st.pyplot(fig)
-    else:
-        st.error("El dataset no contiene las columnas necesarias para el mapa (lon, lat)")
+    gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.Longitud, df.Latitud))
+    fig, ax = plt.subplots()
+    gdf.plot(ax=ax, column='superficie_deforestada', legend=True, cmap='Reds')
+    st.pyplot(fig)
 
 def clusterizar_deforestacion(df):
     """Realiza un análisis de clúster sobre las superficies deforestadas.
@@ -51,14 +39,11 @@ def clusterizar_deforestacion(df):
         df (pd.DataFrame): DataFrame con columnas 'lat', 'lon', 'superficie_deforestada'.
     """
     st.write("### Análisis de Clúster de Deforestación")
-    if "lon" in df.columns and "lat" in df.columns:
-        df['cluster'] = np.digitize(df['superficie_deforestada'], bins=np.histogram_bin_edges(df['superficie_deforestada'], bins=3))
-        fig, ax = plt.subplots()
-        scatter = ax.scatter(df['lon'], df['lat'], c=df['cluster'], cmap='viridis')
-        plt.colorbar(scatter)
-        st.pyplot(fig)
-    else:
-        st.error("El dataset no contiene las columnas necesarias para el análisis de clúster (lon, lat)")
+    df['cluster'] = np.digitize(df['superficie_deforestada'], bins=np.histogram_bin_edges(df['superficie_deforestada'], bins=3))
+    fig, ax = plt.subplots()
+    scatter = ax.scatter(df['Longitud'], df['Latitud'], c=df['cluster'], cmap='viridis')
+    plt.colorbar(scatter)
+    st.pyplot(fig)
 
 def main():
     """Función principal para ejecutar la aplicación de análisis de deforestación."""
