@@ -13,13 +13,20 @@ def cargar_datos():
         pd.DataFrame: DataFrame con los datos cargados e interpolados.
     """
     fuente = st.radio("Seleccione la fuente de datos", ("Archivo", "URL"))
-    df = None
-
-    df = (pd.read_csv(st.file_uploader("Suba un archivo CSV", type=["csv"])) 
-          if fuente == "Archivo" else
-          pd.read_csv(st.text_input("Ingrese la URL del archivo CSV")) if st.text_input("Ingrese la URL del archivo CSV") else None)
     
-    return df.interpolate(method='linear') if df is not None else None
+    if fuente == "Archivo":
+        archivo = st.file_uploader("Suba un archivo CSV", type=["csv"])
+        if archivo is not None:
+            df = pd.read_csv(archivo)
+            return df.interpolate(method='linear')
+
+    elif fuente == "URL":
+        url = st.text_input("Ingrese la URL del archivo CSV")
+        if url:
+            df = pd.read_csv(url)
+            return df.interpolate(method='linear')
+
+    return None
 
 
 def mostrar_estadisticas(df):
