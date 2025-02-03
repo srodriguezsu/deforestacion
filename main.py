@@ -60,18 +60,47 @@ def mostrar_mapa_deforestacion(df, variables_seleccionadas, rango_latitud, rango
 
 
 def clusterizar_deforestacion(df):
-    """Realiza un análisis de clúster sobre las superficies deforestadas.
-
-    Args:
-        df (pd.DataFrame): DataFrame con columnas 'Latitud', 'Longitud', 'Superficie_Deforestada'.
-    """
-    st.write("### Análisis de Clúster de Deforestación")
-    df['cluster'] = np.digitize(df['Superficie_Deforestada'], bins=np.histogram_bin_edges(df['Superficie_Deforestada'], bins=3))
-    fig, ax = plt.subplots()
-    scatter = ax.scatter(df['Longitud'], df['Latitud'], c=df['cluster'], cmap='viridis')
-    plt.colorbar(scatter)
-    st.pyplot(fig)
+    """Realiza un análisis de clúster sobre las superficies deforestadas, 
+    asignando un número de clúster a cada punto de datos según la superficie deforestada.
     
+    Este análisis ayuda a identificar patrones o agrupaciones en los datos de deforestación 
+    según el tamaño de la superficie deforestada. Se utiliza la técnica de discretización de 
+    la superficie deforestada en 3 grupos para categorizar los puntos en diferentes clústeres.
+    
+    Args:
+        df (pd.DataFrame): DataFrame que contiene las siguientes columnas:
+            - 'Latitud': Coordenada de latitud de la ubicación.
+            - 'Longitud': Coordenada de longitud de la ubicación.
+            - 'Superficie_Deforestada': Valor que representa la superficie deforestada en esa ubicación.
+    
+    Returns:
+        None: La función no retorna valores, pero muestra un gráfico de dispersión con 
+              los puntos de datos agrupados por clúster.
+    """
+    # Muestra un título para la sección de análisis de clúster
+    st.write("### Análisis de Clúster de Deforestación")
+    
+    # Crea los bins para dividir las superficies deforestadas en 3 grupos
+    # `np.histogram_bin_edges` devuelve los límites de los bins, que luego usamos en `np.digitize` 
+    # para asignar cada superficie a un clúster (1, 2, o 3).
+    bins = np.histogram_bin_edges(df['Superficie_Deforestada'], bins=3)
+    df['cluster'] = np.digitize(df['Superficie_Deforestada'], bins=bins)
+    
+    # Crear la figura para el gráfico de dispersión
+    fig, ax = plt.subplots(figsize=(10, 6))  # Se define un tamaño adecuado para visualizar bien los puntos
+    scatter = ax.scatter(df['Longitud'], df['Latitud'], c=df['cluster'], cmap='viridis', s=30)
+    
+    # Añadir una barra de color que muestra la relación entre el valor de clúster y el color
+    plt.colorbar(scatter, label='Clúster de Superficie Deforestada')
+    
+    # Etiquetas y título
+    ax.set_title("Distribución de Zonas Deforestadas por Clúster", fontsize=14)
+    ax.set_xlabel("Longitud", fontsize=12)
+    ax.set_ylabel("Latitud", fontsize=12)
+    
+    # Muestra el gráfico en Streamlit
+    st.pyplot(fig)
+
 
 def main():
     """Función principal para ejecutar la aplicación de análisis de deforestación."""
