@@ -39,7 +39,7 @@ def main():
     if data is not None:
         st.write("Datos cargados exitosamente:")
         data = infer_and_convert_data(data)
-        data = data.interpolate(method='linear', limit_direction='both')
+        data = data.interpolate(method='linear')
         
         st.write(data.head())
         
