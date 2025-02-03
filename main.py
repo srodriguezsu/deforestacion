@@ -100,6 +100,7 @@ def crear_geodataframe(df):
 def graficar_zonas_deforestadas(gdf, variable, mapa_mundo):
     """Grafica el mapa de zonas deforestadas según una variable (tipo de vegetación, altitud, precipitación)."""
     # Primero, asegurarnos que la variable existe en el DataFrame
+    st.write("# Grafio de zonas deforestadas segun {variable}")
     if variable not in gdf.columns:
         st.warning(f"La variable {variable} no se encuentra en los datos.")
         return
