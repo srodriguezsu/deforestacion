@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
 from scipy.interpolate import griddata
+from shapely.geometry import Point
 
 def cargar_datos():
     """Carga datos desde la URL fija del archivo de deforestación.
@@ -21,15 +22,18 @@ def mostrar_estadisticas(df):
     st.write(df.describe())
 
 def mostrar_mapa_deforestacion(df):
-    """Genera un mapa con las zonas de deforestación.
+    """Genera un mapa con las zonas de deforestación usando imágenes satelitales.
 
     Args:
         df (pd.DataFrame): DataFrame con las columnas 'Latitud', 'Longitud', 'Superficie_Deforestada'.
     """
     st.write("### Mapa de Zonas Deforestadas")
-    gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.Longitud, df.Latitud))
-    fig, ax = plt.subplots()
-    gdf.plot(ax=ax, column='Superficie_Deforestada', legend=True, cmap='Reds')
+    world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+    df['geometry'] = df.apply(lambda row: Point(row['Longitud'], row['Latitud']), axis=1)
+    gdf = gpd.GeoDataFrame(df, geometry='geometry')
+    fig, ax = plt.subplots(figsize=(10, 6))
+    world.plot(ax=ax, color='lightgray')
+    gdf.plot(ax=ax, column='Superficie_Deforestada', legend=True, cmap='Reds', markersize=5)
     st.pyplot(fig)
 
 def clusterizar_deforestacion(df):
@@ -45,14 +49,27 @@ def clusterizar_deforestacion(df):
     plt.colorbar(scatter)
     st.pyplot(fig)
 
+def grafico_torta_vegetacion(df):
+    """Genera un gráfico de torta según el tipo de vegetación.
+
+    Args:
+        df (pd.DataFrame): DataFrame con columna 'Tipo_Vegetacion'.
+    """
+    st.write("### Distribución por Tipo de Vegetación")
+    tipo_veg = df['Tipo_Vegetacion'].value_counts()
+    fig, ax = plt.subplots()
+    ax.pie(tipo_veg, labels=tipo_veg.index, autopct='%1.1f%%', startangle=90)
+    st.pyplot(fig)
+
 def main():
     """Función principal para ejecutar la aplicación de análisis de deforestación."""
     st.title("Análisis de Deforestación")
     df = cargar_datos()
-    mostrar_estadisticas(df)
-    mostrar_mapa_deforestacion(df)
-    clusterizar_deforestacion(df)
-
+    if df is not None:
+        mostrar_estadisticas(df)
+        mostrar_mapa_deforestacion(df)
+        clusterizar_deforestacion(df)
+        grafico_torta_vegetacion(df)
 
 if __name__ == "__main__":
     main()
