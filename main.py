@@ -1,8 +1,9 @@
-import streamlit as st
+import geopandas as gpd
 import pandas as pd
 import numpy as np
+import streamlit as st
 import matplotlib.pyplot as plt
-
+from shapely.geometry import Point
 
 def load_data(file=None, url=None):
     """Carga los datos desde un archivo o una URL."""
