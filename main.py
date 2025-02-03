@@ -253,7 +253,7 @@ def main():
             st.warning("No se han seleccionado variables para filtrar.")
         
         gdf1 = crear_geodataframe(data)
-        clustered_data, kmeans_model = realizar_clustering(gdf1, 5)
+        clustered_data, kmeans_model = realizar_clustering(gdf1)
         
         # Mostrar los clústeres
         st.write(clustered_data[['Latitud', 'Longitud', 'Superficie_Deforestada', 'Cluster']].head())
