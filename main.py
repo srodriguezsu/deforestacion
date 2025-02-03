@@ -49,10 +49,10 @@ def main():
     """Función principal para ejecutar la aplicación de análisis de deforestación."""
     st.title("Análisis de Deforestación")
     df = cargar_datos()
-    if df is not None:
-        mostrar_estadisticas(df)
-        mostrar_mapa_deforestacion(df)
-        clusterizar_deforestacion(df)
+    mostrar_estadisticas(df)
+    mostrar_mapa_deforestacion(df)
+    clusterizar_deforestacion(df)
+
 
 if __name__ == "__main__":
     main()
