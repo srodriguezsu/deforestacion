@@ -39,7 +39,6 @@ def mostrar_mapa_deforestacion(df, variables_seleccionadas, rango_latitud, rango
     # Crear el mapa
     route = "https://naturalearth.s3.amazonaws.com/50m_cultural/ne_50m_admin_0_countries.zip"
     world = gpd.read_file(route)
-    world = world[world['continent'] == 'South America']
     fig, ax = plt.subplots(figsize=(10, 6))
     world.plot(ax=ax, color='lightgray')
     gdf.plot(ax=ax, column='Superficie_Deforestada', legend=True, cmap='Reds', markersize=5)
