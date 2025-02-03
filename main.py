@@ -97,25 +97,29 @@ def crear_geodataframe(df):
     return gdf
 
 
-def graficar_zonas_deforestadas(gdf, variable, mapa_mundo):
-    """Grafica el mapa de zonas deforestadas según una variable (tipo de vegetación, altitud, precipitación)."""
-    # Primero, asegurarnos que la variable existe en el DataFrame
-    st.write(f"# Grafio de zonas deforestadas segun {variable}")
-    if variable not in gdf.columns:
-        st.warning(f"La variable {variable} no se encuentra en los datos.")
-        return
 
+def graficar_zonas_deforestadas(gdf, variables_seleccionadas, mapa_mundo):
+    """Grafica el mapa de zonas deforestadas según las variables seleccionadas por el usuario."""
+    
+    # Filtrar datos según las variables seleccionadas
+    for var, valores in variables_seleccionadas.items():
+        if var in gdf.columns:
+            if isinstance(valores, tuple):  # Para rangos numéricos
+                gdf = gdf[gdf[var].between(valores[0], valores[1])]
+            else:  # Para variables categóricas
+                gdf = gdf[gdf[var].isin(valores)]
+    
     # Crear una figura y un eje para el gráfico
     fig, ax = plt.subplots(figsize=(12, 8))
     
     # Graficar el mapa mundial
     mapa_mundo.plot(ax=ax, color='lightgrey', edgecolor='black')
 
-    # Graficar las zonas deforestadas según la variable seleccionada
-    gdf.plot(ax=ax, column=variable, legend=True, cmap='coolwarm', markersize=5, alpha=0.7)
+    # Graficar las zonas deforestadas según las variables seleccionadas
+    gdf.plot(ax=ax, marker='o', color='red', markersize=5, alpha=0.7)
 
     # Títulos y etiquetas
-    ax.set_title(f"Zonas deforestadas por {variable}", fontsize=16)
+    ax.set_title(f"Zonas deforestadas filtradas según las variables seleccionadas", fontsize=16)
     ax.set_xlabel('Longitud')
     ax.set_ylabel('Latitud')
 
